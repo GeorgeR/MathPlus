@@ -1,0 +1,414 @@
+#pragma once
+
+#include "CoreMinimal.h"
+
+#pragma region Declaration
+template <typename TElementType>
+struct TPoint4D
+{
+private:
+    typedef TPoint4D<TElementType> TPointType;
+
+public:
+#pragma region Data
+    TElementType X;
+    TElementType Y;
+    TElementType Z;
+    TElementType W;
+#pragma endregion Data
+
+#pragma region Statics
+    MATHPLUS_API static const TPointType Zero;
+    MATHPLUS_API static const TPointType One;
+    MATHPLUS_API static const TPointType Up;
+    MATHPLUS_API static const TPointType Right;
+    MATHPLUS_API static const TPointType Forward;
+#pragma endregion Statics
+
+#pragma region Constructors
+    TPoint4D();
+    TPoint4D(TElementType Value);
+    TPoint4D(TElementType X, TElementType Y, TElementType Z, TElementType W);
+    explicit FORCEINLINE TPoint4D(EForceInit);
+#pragma endregion Constructors
+
+#pragma region Accessors
+    const TElementType& operator()(uint8 Index) const;
+    TElementType& operator()(uint8 Index);
+
+    TElementType operator[](uint8 Index) const;
+    TElementType& operator[](uint8 Index);
+#pragma endregion Accessors
+
+#pragma region Operators
+    bool operator==(const TPointType& Other) const;
+    bool operator!=(const TPointType& Other) const;
+
+    friend uint32 GetTypeHash(const TPointType& Value);
+
+    TPointType operator+=(const TElementType& Other) const;
+    TPointType& operator+=(const TElementType& Other);
+
+    TPointType operator+=(const TPointType& Other) const;
+    TPointType& operator+=(const TPointType& Other);
+
+    TPointType operator-=(const TElementType& Other) const;
+    TPointType& operator-=(const TElementType& Other);
+
+    TPointType operator-=(const TPointType& Other) const;
+    TPointType& operator-=(const TPointType& Other);
+
+    TPointType operator*=(TElementType Scale) const;
+    TPointType& operator*=(TElementType Scale);
+
+    TPointType operator*=(const TPointType& Other) const;
+    TPointType& operator*=(const TPointType& Other);
+
+    TPointType operator/=(TElementType Divisor) const;
+    TPointType& operator/=(TElementType Divisor);
+
+    TPointType operator/=(const TPointType& Other) const;
+    TPointType& operator/=(const TPointType& Other);
+#pragma endregion Operators
+
+    FORCEINLINE TPointType ComponentMin(const TPointType& Other) const;
+    FORCEINLINE TPointType ComponentMax(const TPointType& Other) const;
+
+    TElementType GetMin() const;
+    TElementType GetMax() const;
+
+    TElementType Size() const;
+    TElementType SizeSquared() const;
+
+    FString ToString() const;
+
+    static int32 NumComponents() { return 3; }
+
+#pragma region Serialization
+    friend FArchive& operator<<(FArchive& Ar, TPointType& Value);
+    friend void operator<<(FStructuredArchive::FSlot Slot, TPointType& Value);
+    bool Serialize(FArchive& Ar);
+    bool Serialize(FStructuredArchive::FSlot Slot);
+#pragma endregion Serialization
+};
+#pragma endregion Declaration
+
+#pragma region Definition
+#define TPointType TPoint4D<TElementType>
+#define TemplateDeclaration template <typename TElementType>
+#pragma region Constructors
+TemplateDeclaration
+FORCEINLINE TPointType::TPoint4D() { }
+
+TemplateDeclaration
+FORCEINLINE TPointType::TPoint4D(TElementType Value)
+    : X(Value),
+    Y(Value),
+    Z(Value),
+    W(Value)
+{ }
+
+TemplateDeclaration
+FORCEINLINE TPointType::TPoint4D(TElementType X, TElementType Y, TElementType Z, TElementType W)
+    : X(X),
+    Y(Y),
+    Z(Z),
+    W(W)
+{ }
+
+TemplateDeclaration
+FORCEINLINE TPointType::TPoint4D(EForceInit)
+    : X(0),
+    Y(0),
+    Z(0),
+    W(0)
+{ }
+#pragma endregion Constructors
+
+#pragma region Accessors
+TemplateDeclaration
+FORCEINLINE const TElementType& TPointType::operator()(uint8 Index) const
+{
+    return (&X)[Index];
+}
+
+TemplateDeclaration
+FORCEINLINE TElementType& TPointType::operator()(uint8 Index)
+{
+    return (&X)[Index];
+}
+
+TemplateDeclaration
+FORCEINLINE TElementType TPointType::operator[](uint8 Index) const
+{
+    check(Index >= 0 && Index < 4);
+    if (Index == 0)
+        return X;
+    else if (Index == 1)
+        return Y;
+    else if (Index == 2)
+        return Z;
+    else if (Index == 3)
+        return W;
+}
+
+TemplateDeclaration
+FORCEINLINE TElementType& TPointType::operator[](uint8 Index)
+{
+    check(Index >= 0 && Index < 4);
+    if (Index == 0)
+        return X;
+    else if (Index == 1)
+        return Y;
+    else if (Index == 2)
+        return Z;
+    else if (Index == 3)
+        return W;
+}
+#pragma endregion Accessors
+
+#pragma region Operators
+
+#pragma region Equality
+TemplateDeclaration
+FORCEINLINE bool TPointType::operator==(const TPointType& Other) const
+{
+    return X == Other.X && Y == Other.Y && Z == Other.Z && W == Other.W;
+}
+
+TemplateDeclaration
+FORCEINLINE bool TPointType::operator!=(const TPointType& Other) const
+{
+    return (X != Other.X) || (Y != Other.Y) || (Z != Other.Z) || (W != Other.W);
+}
+#pragma endregion Equality
+
+#pragma region Add
+TemplateDeclaration
+FORCEINLINE TPointType TPointType::operator+=(const TElementType& Other) const
+{
+    return TPointType(*this) += Other;
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType& TPointType::operator+=(const TElementType& Other)
+{
+    X += Other;
+    Y += Other;
+    Z += Other;
+    W += Other;
+
+    return *this;
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType TPointType::operator+=(const TPointType& Other) const
+{
+    return TPointType(*this) += Other;
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType& TPointType::operator+=(const TPointType& Other)
+{
+    X += Other.X;
+    Y += Other.Y;
+    Z += Other.Z;
+    W += Other.W;
+
+    return *this;
+}
+#pragma endregion Add
+
+#pragma region Subtract
+TemplateDeclaration
+FORCEINLINE TPointType TPointType::operator-=(const TElementType& Other) const
+{
+    return TPointType(*this) -= Other;
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType& TPointType::operator-=(const TElementType& Other)
+{
+    X -= Other;
+    Y -= Other;
+    Z -= Other;
+    W -= Other;
+
+    return *this;
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType TPointType::operator-=(const TPointType& Other) const
+{
+    return TPointType(*this) -= Other;
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType& TPointType::operator-=(const TPointType& Other)
+{
+    X -= Other.X;
+    Y -= Other.X;
+    Z -= Other.Z;
+    W -= Other.W;
+
+    return *this;
+}
+#pragma endregion Subtract
+
+#pragma region Multiply
+TemplateDeclaration
+FORCEINLINE TPointType TPointType::operator*=(TElementType Scale) const
+{
+    return TPointType(*this) *= Other;
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType& TPointType::operator*=(TElementType Scale)
+{
+    X *= Scale;
+    Y *= Scale;
+    Z *= Scale;
+    W *= Scale;
+
+    return *this;
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType TPointType::operator*=(const TPointType& Other) const
+{
+    return TPointType(*this) *= Other;
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType& TPointType::operator*=(const TPointType& Other)
+{
+    X *= Other.X;
+    Y *= Other.Y;
+    Z *= Other.Z;
+    W *= Other.W;
+
+    return *this;
+}
+#pragma endregion Multiply
+
+#pragma region Divide
+TemplateDeclaration
+TPointType TPointType::operator/=(TElementType Divisor) const
+{
+    return TPointType(*this) /= Other;
+}
+
+TemplateDeclaration
+TPointType& TPointType::operator/=(TElementType Divisor)
+{
+    X /= Divisor;
+    Y /= Divisor;
+    Z /= Divisor;
+    W /= Divisor;
+
+    return *this;
+}
+
+TemplateDeclaration
+TPointType TPointType::operator/=(const TPointType& Other) const
+{
+    return TPointType(*this) /= Other;
+}
+
+TemplateDeclaration
+TPointType& TPointType::operator/=(const TElementType& Other)
+{
+    X /= Other.X;
+    Y /= Other.Y;
+    Z /= Other.Z;
+    W /= Other.W;
+
+    return *this;
+}
+#pragma endregion Divide
+#pragma endregion Operators
+
+TemplateDeclaration
+FORCEINLINE TPointType TPointType::ComponentMin(const TPointType& Other) const
+{
+    return TPointType(FMath::Min(X, Other.X), FMath::Min(Y, Other.Y), FMath::Min(Z, Other.Z), FMath::Min(W, Other.W));
+}
+
+TemplateDeclaration
+FORCEINLINE TPointType TPointType::ComponentMax(const TPointType& Other) const
+{
+    return TPointType(FMath::Max(X, Other.X), FMath::Max(Y, Other.Y), FMath::Max(Z, Other.Z), FMath::Max(W, Other.W));
+}
+
+TemplateDeclaration
+FORCEINLINE TElementType TPointType::GetMin() const
+{
+    return FMath::Min(FMath::Min(FMath::Min(X, Y), Z), W);
+}
+
+TemplateDeclaration
+FORCEINLINE TElementType TPointType::GetMax() const
+{
+    return FMath::Max(FMath::Max(FMath::Max(X, Y), Z), W);
+}
+
+TemplateDeclaration
+FORCEINLINE TElementType TPointType::Size() const
+{
+    return TElementType(FMath::Sqrt(X * X + Y * Y + Z * Z + W * W));
+}
+
+TemplateDeclaration
+FORCEINLINE TElementType TPointType::SizeSquared() const
+{
+    return X * X + Y * Y + Z * Z + W * W;
+}
+
+TemplateDeclaration
+FORCEINLINE FString TPointType::ToString() const
+{
+    return FString::Printf(TEXT("X=%d Y=%d Z=%d W=%d"), X, Y, Z, W);
+}
+
+#pragma region Serialization
+TemplateDeclaration
+FORCEINLINE FArchive& TPointType::operator<<(FArchive& Ar, TPointType& Value)
+{
+    return A << Value.X << Value.Y << Value.Z << Value.W;
+}
+
+TemplateDeclaration
+FORCEINLINE void TPointType::operator<<(FStructuredArchive::FSlot Slot, TPointType& Value)
+{
+    FStructuredArchive::FRecord Record = Slot.EnterRecord();
+    Record << NAMED_ITEM("X", Value.X) << NAMED_ITEM("Y", Value.Y) << NAMED_ITEM("Z", Value.Z) << NAMED_ITEM("W", Value.W);
+}
+
+TemplateDeclaration
+FORCEINLINE bool TPointType::Serialize(FArchive& Ar)
+{
+    Ar << *this;
+    return true;
+}
+
+TemplateDeclaration
+FORCEINLINE bool TPointType::Serialize(FStructuredArchive::FSlot Slot)
+{
+    Slot << *this;
+    return true;
+}
+#pragma endregion Serialization
+
+TemplateDeclaration
+struct TIsPODType<TPointType> { enum { Value = true }; };
+
+#undef TPointType
+#undef TemplateDeclaration
+#pragma endregion Definition
+
+typedef TPoint4D<int8> FBytePoint4D;
+typedef TPoint4D<int16> FShortPoint4D;
+typedef TPoint4D<int32> FIntPoint4D;
+typedef TPoint4D<FFloat16> FHalfPoint4D;
+typedef TPoint4D<float> FFloatPoint4D;
+typedef TPoint4D<double> FDoublePoint4D;
