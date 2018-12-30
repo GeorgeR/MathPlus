@@ -139,8 +139,8 @@ FORCEINLINE TElementType& TPointType::operator[](uint8 Index)
         return Y;
     else if (Index == 2)
         return Z;
-    else if (Index == 3)
-        return W;
+
+	return W;
 }
 #pragma endregion Accessors
 
