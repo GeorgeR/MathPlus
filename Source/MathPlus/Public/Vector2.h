@@ -105,8 +105,8 @@ public:
     TElementType operator[](uint8 Index) const;
     TElementType& operator[](uint8 Index);
 
-    TElementType GetComponent(uint8 Index) const;
-    TElementType& GetComponent(uint8 Index);
+    TElementType GetComponentOfType(uint8 Index) const;
+    TElementType& GetComponentOfType(uint8 Index);
 
     TElementType GetComponentForAxis(EAxis::Type Axis) const;
     void SetComponentForAxis(EAxis::Type Axis, TElementType Value);
@@ -311,13 +311,13 @@ TElementType TVector4D<TElementType>::GetComponentForAxis(EAxis::Type Axis) cons
 }
 
 template <typename TElementType>
-TElementType& TVector4D<TElementType>::GetComponent(uint8 Index)
+TElementType& TVector4D<TElementType>::GetComponentOfType(uint8 Index)
 {
 
 }
 
 template <typename TElementType>
-TElementType TVector4D<TElementType>::GetComponent(uint8 Index) const
+TElementType TVector4D<TElementType>::GetComponentOfType(uint8 Index) const
 {
 
 }
