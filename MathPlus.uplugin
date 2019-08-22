@@ -18,6 +18,11 @@
 			"Name": "MathPlus",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-		}
+        },
+        {
+            "Name": "MathPlusEditor",
+            "Type": "Editor",
+            "LoadingPhase": "Default"
+        }
 	]
 }
