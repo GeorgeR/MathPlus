@@ -157,7 +157,6 @@ bool FFloat64Customization::UpdateValue(TWeakPtr<IPropertyHandle> WeakHandlePtr)
     if (!PropertyHandle.IsValid())
         return false;
 
-
     TArray<void*> RawData;
     PropertyHandle->AccessRawData(RawData);
 
@@ -173,10 +172,10 @@ bool FFloat64Customization::UpdateValue(TWeakPtr<IPropertyHandle> WeakHandlePtr)
     auto bNotifiedPreChange = false;
     for (auto ValueIndex = 0; ValueIndex < RawData.Num(); ValueIndex++)
     {
-        const auto Value = reinterpret_cast<double*>(RawData[0]);
-        if (Value != nullptr)
+        const auto DoubleValue = reinterpret_cast<double*>(RawData[0]);
+        if (DoubleValue != nullptr)
         {
-            const double PreviousValue = *Value;
+            const double PreviousValue = *DoubleValue;
 
             //FRotator Rotation(
             //    CachedRotationPitch->IsSet() ? CachedRotationPitch->Get() : CurrentRotation.Pitch,
@@ -195,7 +194,7 @@ bool FFloat64Customization::UpdateValue(TWeakPtr<IPropertyHandle> WeakHandlePtr)
             //);
 
             const auto NewValue = PreviousValue;            
-            if (!bNotifiedPreChange && (!FMath::IsNearlyEqual(*Value, NewValue, 0.0) || (!bIsUsingSlider && bIsInteractiveChangeInProgress)))
+            if (!bNotifiedPreChange && (!FMath::IsNearlyEqual(*DoubleValue, NewValue, 0.0) || (!bIsUsingSlider && bIsInteractiveChangeInProgress)))
             {
                 if (!bIsInteractiveChangeInProgress)
                     GEditor->BeginTransaction(FText::Format(NSLOCTEXT("FTransformStructCustomization", "SetPropertyValue", "Set {0}"), PropertyHandle->GetPropertyDisplayName()));
@@ -207,7 +206,7 @@ bool FFloat64Customization::UpdateValue(TWeakPtr<IPropertyHandle> WeakHandlePtr)
             }
 
             // Set the new value.
-            *Value = NewValue;
+            *DoubleValue = NewValue;
 
             // Propagate default value changes after updating, for archetypes. As per usual, we only propagate the change if the instance matches the archetype's value.
             // Note: We cannot use the "normal" PropertyNode propagation logic here, because that is string-based and the decision to propagate relies on an exact value match.
