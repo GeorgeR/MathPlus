@@ -9,5 +9,5 @@
 template <uint8 Dimension>
 struct TDimensionTraits
 {
-    static_assert(Dimension >= 2 && Dimension <= 4, "Dimension must be between 2 and 4.")
+    static_assert(Dimension >= 2 && Dimension <= 4, "Dimension must be between 2 and 4.");
 };
